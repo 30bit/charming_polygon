@@ -13,7 +13,7 @@ Vertices are arranged in order of their ASCII values, i.e. 0..9, A..Z, a..z.
 Add charming_polygon as a dependency to Cargo.toml:
 ```toml
 [dependencies]
-early_ketupa = { git = "https://github.com/30bit/early_ketupa" }
+early_ketupa = { git = "https://github.com/30bit/charming_polygon" }
 ```
 Read text to an array of points:
 ```rust
