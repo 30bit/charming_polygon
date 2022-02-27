@@ -121,11 +121,11 @@ impl Buffer {
     }
 
     fn set(&mut self, index: usize, x: u16, y: u16) {
-        if x > self.width {
-            self.width = x;
+        if x >= self.width {
+            self.width = x + 1;
         }
-        if y > self.height {
-            self.height = y;
+        if y >= self.height {
+            self.height = y + 1;
         }
         unsafe { *self.points.get_unchecked_mut(index as usize) = [x, y] };
         self.len += 1;
@@ -146,7 +146,7 @@ impl Writer {
 
     pub fn write(&mut self, dest: &mut impl Write, src: &Buffer) -> fmt::Result {
         let line = src.width as usize + 1;
-        self.clear_and_resize(line, line * (src.height as usize + 1));
+        self.clear_and_resize(line, (line * src.height as usize).saturating_sub(1));
         if src.len < 10 {
             self.set_each(&src.points[..src.len], line, ZERO);
         } else {
@@ -165,12 +165,13 @@ impl Writer {
     fn clear_and_resize(&mut self, line: usize, len: usize) {
         if len > self.0.len() {
             self.0.fill(SPACE);
-            self.0.resize(len + 1, SPACE);
+            self.0.resize(len, SPACE);
         } else {
-            self.0.truncate(len + 1);
+            self.0.truncate(len);
             self.0.fill(SPACE);
         }
-        for i in (line..=len).step_by(line) {
+        for i in (line.saturating_sub(1)..len).step_by(line) {
+           
             unsafe { *self.0.get_unchecked_mut(i) = LINE_FEED }
         }
     }
@@ -180,10 +181,7 @@ impl Writer {
             unsafe {
                 let x = *point.get_unchecked(0) as usize;
                 let y = *point.get_unchecked(1) as usize;
-                let mut index = x + y * line;
-                if y != 0 {
-                    index += 1;
-                }
+                let index = x + y * line;
                 *self.0.get_unchecked_mut(index) = start_ascii;
             }
             start_ascii += 1;
