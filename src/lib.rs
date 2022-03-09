@@ -11,7 +11,7 @@ const LOWERCASE_A: u8 = 97;
 
 #[derive(Copy, Clone)]
 pub struct Buffer {
-    points: [[u16; 2]; 60],
+    points: [[u16; 2]; 62],
     width: u16,
     height: u16,
     len: usize,
@@ -39,7 +39,7 @@ macro_rules! shrink_to_fit {
 impl Default for Buffer {
     fn default() -> Self {
         Self {
-            points: [[0; 2]; 60],
+            points: [[0; 2]; 62],
             width: 0,
             height: 0,
             len: 0,
